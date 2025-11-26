@@ -1,0 +1,24 @@
+# Episode Brief for KNOW: HISTORY
+
+title: "Uruk: The First City"
+topic: "The rise of Uruk in Mesopotamia"
+
+# The core argument or question the video answers.
+thesis: "Uruk was not just a large village; it was a fundamental reorganization of human society."
+
+# Key historical facts that MUST be included.
+key_points:
+  - "The Eanna district and the White Temple."
+  - "The invention of writing (cuneiform) for administration."
+  - "The bevelled-rim bowl as a sign of mass labor/rationing."
+  - "The Epic of Gilgamesh connection."
+
+# Tone adjustments (optional)
+# Default is: Calm, Intelligent, Objective.
+tone_notes: "Awe-inspiring but grounded in mud-brick reality."
+
+# Series / Category (REQUIRED)
+series: "Origins & Reconstructions"
+
+# Visual style preferences
+visual_style: "Sun-baked mud brick, blue lapis lazuli accents, bustling crowds, river traffic."

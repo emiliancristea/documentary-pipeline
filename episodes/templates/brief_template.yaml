@@ -1,0 +1,32 @@
+# Episode Brief for KNOW: HISTORY
+
+title: "The Title of the Episode"
+topic: "Specific subject matter (e.g., The Bronze Age Collapse)"
+
+# The core argument or question the video answers.
+thesis: "Civilizations are fragile systems that can collapse rapidly when multiple stressors align."
+
+# Key historical facts that MUST be included.
+key_points:
+  - "The Sea Peoples were a symptom, not the sole cause."
+  - "Earthquake storms contributed to physical destruction."
+  - "Trade route disruption caused famine."
+  - "The year 1177 BC is a symbolic turning point."
+
+# Tone adjustments (optional)
+# Default is: Calm, Intelligent, Objective.
+tone_notes: "Emphasize the tragedy of lost knowledge, but remain analytical."
+
+# Series / Category (REQUIRED)
+# Options:
+# - Origins & Reconstructions
+# - Texts & Primary Sources
+# - Artifacts & Archaeology
+# - Power, Empires & Diplomacy
+# - Ancient Science, Technology & Engineering
+# - Economy, Everyday Life & Trade Routes
+# - Method, Myths & Responsible Debunking
+series: "Power, Empires & Diplomacy"
+
+# Visual style preferences
+visual_style: "Cinematic, moody, maps with movement, artifacts in museum lighting."

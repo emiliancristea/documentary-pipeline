@@ -1,0 +1,30 @@
+project:
+  name: "KNOW: HISTORY Pipeline"
+  version: "1.0.0"
+  output_dir: "episodes"
+
+google_cloud:
+  project_id: "363943871395"
+  location: "us-central1"
+
+google:
+  api_key: ""  # Set via GOOGLE_API_KEY environment variable or add here
+
+models:
+  text_main: "gemini-3-pro-preview"
+  text_light: "gemini-3-pro-preview"
+  image_main: "gemini-3-pro-image-preview"
+  tts_model: "gemini-2.5-pro-preview-tts"
+
+tts:
+  voice_name: "Charon"
+  language_code: "en-US"
+  speaking_rate: 1.0
+  pitch: 0.0
+
+runtime:
+  mock_mode: false # Set to false for real API calls
+
+paths:
+  prompts: "prompts"
+  assets: "assets"
