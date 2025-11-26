@@ -1,89 +1,142 @@
-# KNOW: HISTORY - Automated Documentary Pipeline
+# Documentary Pipeline - End-to-End Video Production Automation
 
-**Project:** Automated YouTube Documentary Production  
-**Channel:** KNOW: HISTORY (@KnowNowHistory)  
-**Tech Stack:** Python, Google Vertex AI (Gemini, Imagen), Google Cloud TTS, FFmpeg
+A fully automated content production system that transforms a simple text brief into a complete, rendered video - with zero manual intervention.
 
-## Overview
+## Key Skills Demonstrated
 
-This project contains a modular, agentic pipeline designed to go from a simple **Episode Brief** to a fully assembled video timeline (and rendered video). It strictly adheres to the "KNOW: HISTORY" brand guidelines: calm, intelligent, distinguishing consensus from speculation.
+| Skill | Implementation |
+|-------|----------------|
+| **Python Automation** | End-to-end pipeline orchestration with modular agent architecture |
+| **API Integration** | Google Vertex AI (Gemini, Imagen), Google Cloud TTS, streaming responses |
+| **AI/LLM Orchestration** | Multi-agent system with prompt engineering and JSON schema enforcement |
+| **Error Handling** | Exponential backoff retry logic, rate limit handling (429), graceful degradation |
+| **Media Processing** | FFmpeg subprocess automation for video rendering and audio mixing |
+| **File System Automation** | Dynamic directory creation, asset validation, corrupt file detection |
+| **Configuration Management** | YAML-based configs with environment separation (mock/production modes) |
+| **Data Transformation** | JSON parsing, schema extraction from LLM responses, state management |
 
-## Architecture
+## What This Project Does
 
-The system is orchestrated by `main.py`, which passes a state object (the `EpisodeContext`) through a series of specialized AI Agents.
+**Input:** A YAML brief describing a video topic (title, key points, duration)
 
-### The Pipeline Steps:
+**Output:** A fully rendered MP4 video with:
+- AI-generated script (structured narrative)
+- AI-generated images for each scene
+- AI-synthesized voice-over narration
+- Timed video assembly with transitions
 
-1.  **Brief Normalization:** Validates and expands the user's input brief.
-2.  **Script Writer (Gemini):** Writes a structured documentary script (Hook -> Act 1 -> Act 2 -> Act 3 -> Conclusion).
-3.  **Structure & Timing:** Breaks the script into segments, estimates duration, and assigns visual intent.
-4.  **Visual Director (Gemini):** Generates detailed image prompts for each segment.
-5.  **Production (Imagen):** Generates high-fidelity assets for the visual prompts.
-6.  **Narration (Google TTS):** Generates voice-over audio files.
-7.  **Assembly:** Combines Audio, Images, and Timing into a `timeline.json` and renders the final video via FFmpeg.
-
-## Directory Structure
-
-- `agents/`: Python classes defining the logic for each step of the pipeline.
-- `config/`: YAML configuration files for models, paths, and API settings.
-- `prompts/`: Markdown files containing the system prompts for the AI agents.
-- `episodes/`: Storage for episode data. Each episode gets its own folder (e.g., `episodes/001_roman_concrete/`).
-- `utils/`: Helper functions for Google API interaction and file handling.
-- `docs/`: Detailed architectural documentation.
-
-## Setup
-
-1.  **Install Dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-2.  **Google Cloud Credentials:**
-    - Ensure you have a Google Cloud Project with Vertex AI and Text-to-Speech APIs enabled.
-    - Set your credentials:
-      ```bash
-      export GOOGLE_APPLICATION_CREDENTIALS="path/to/your-service-account.json"
-      ```
-    - Update `config/settings.yaml` with your Project ID and Region.
-
-3.  **FFmpeg:**
-    - Ensure `ffmpeg` is installed and available in your system PATH.
-
-## Real Asset Generation and Rendering
-
-To run the pipeline with real Google AI models and generate a final video:
-
-1.  **Requirements:**
-    - Install the GenAI client: `pip install google-genai`
-    - Ensure `ffmpeg` is in your system PATH.
-
-2.  **Configuration (`config/settings.yaml`):**
-    - **API Key:** Ensure `google.api_key` is set in `config/settings.yaml`.
-    - **Runtime:** Set `runtime.mock_mode: false` to use real models.
-    - **Models:** Verify model names (defaults are `gemini-2.0-flash-exp` for text/TTS and `imagen-3.0-generate-001` for images).
-
-3.  **Run with Render:**
-    ```bash
-    python main.py --brief episodes/my_brief.yaml --name My_Episode --render
-    ```
-
-    This will:
-    - Generate a script and structure.
-    - Create real images using Imagen.
-    - Synthesize real voice-over using Gemini TTS.
-    - Assemble a final `.mp4` video in `episodes/My_Episode/final_video.mp4`.
-
-## Usage
-
-**1. Create a Brief:**
-Copy `episodes/templates/brief_template.yaml` to a new file (e.g., `my_episode_brief.yaml`) and fill it out.
-
-**2. Run the Pipeline (Dry Run):**
-```bash
-# Ensure runtime.mock_mode is true in settings.yaml
-python main.py --brief my_episode_brief.yaml --name "The_Bronze_Age_Collapse"
+```
+Brief (YAML) → Script → Structure → Images → Audio → Timeline → Video (MP4)
 ```
 
-**3. Run Production Build:**
-See section above.
+## Technical Architecture
+
+### Pipeline Pattern (State Machine)
+```python
+# main.py - Sequential agent execution with shared context
+pipeline = [
+    ScriptAgent(config),        # LLM: Generate documentary script
+    StructureTimingAgent(config), # LLM: Break into timed segments
+    ImagePromptAgent(config),   # LLM: Create visual descriptions
+    ProductionAgent(config),    # API: Generate images (Imagen)
+    VoiceOverAgent(config),     # API: Synthesize speech (TTS)
+    VideoAssemblyAgent(config), # LLM: Create timeline JSON
+    QAAgent(config)             # LLM: Quality check
+]
+
+for agent in pipeline:
+    context = agent.run(context)  # Each agent transforms shared state
+```
+
+### API Integration with Resilience
+```python
+# Exponential backoff with jitter for rate limits
+@retry_with_backoff(max_retries=5, initial_delay=1.0)
+def _call_api():
+    return client.models.generate_content(...)
+
+# Handles 429 RESOURCE_EXHAUSTED errors automatically
+# Implements streaming responses for large media files
+```
+
+### Media Processing Automation
+```python
+# FFmpeg subprocess orchestration
+cmd = [
+    "ffmpeg", "-y",
+    "-f", "concat", "-safe", "0", "-i", video_concat_path,
+    "-f", "concat", "-safe", "0", "-i", audio_concat_path,
+    "-c:v", "libx264", "-r", "30", "-pix_fmt", "yuv420p",
+    "-c:a", "aac", "-b:a", "192k",
+    "-shortest", output_path
+]
+subprocess.run(cmd, check=True)
+```
+
+### Intelligent Asset Management
+```python
+# Skip regeneration if valid asset exists, detect corruption
+for ext in ['.png', '.jpg', '.jpeg']:
+    candidate = base_path + ext
+    if os.path.exists(candidate):
+        if os.path.getsize(candidate) > 1024:  # Validate file integrity
+            existing_file = candidate
+            break
+        else:
+            os.remove(candidate)  # Auto-cleanup corrupt files
+```
+
+## Project Structure
+
+```
+├── main.py                 # Pipeline orchestrator (CLI entry point)
+├── agents/                 # Modular agent classes
+│   ├── base.py            # Abstract base with prompt loading
+│   ├── scripting.py       # Script + Structure + Image prompt agents
+│   ├── production.py      # Image generation with Imagen API
+│   ├── voice_over.py      # TTS synthesis with speech API
+│   ├── assembly.py        # Timeline generation
+│   └── qa.py              # Quality assurance checks
+├── utils/
+│   ├── google_api.py      # API client with retry logic & streaming
+│   └── local_tts.py       # Fallback local TTS support
+├── tools/
+│   └── render_video.py    # FFmpeg video assembly automation
+├── prompts/               # LLM system prompts (markdown)
+├── config/
+│   └── settings.yaml      # Centralized configuration
+└── episodes/              # Output directory (generated content)
+```
+
+## Tech Stack
+
+- **Language:** Python 3.x
+- **AI/ML:** Google Vertex AI (Gemini 3 Pro, Imagen 3), Google Cloud TTS
+- **Media:** FFmpeg (video encoding, audio mixing)
+- **Config:** YAML, JSON
+- **APIs:** Google GenAI SDK (streaming)
+
+## Quick Start
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Set API key in config/settings.yaml or environment
+export GOOGLE_API_KEY="your-key"
+
+# Run full pipeline (mock mode for testing)
+python main.py --brief episodes/episode_0001_uruk.yaml --name Test_Episode
+
+# Run with real AI + video render
+python main.py --brief episodes/episode_0001_uruk.yaml --name My_Episode --render
+```
+
+## Automation Highlights
+
+1. **Zero-Touch Execution** - Single command produces complete video from text input
+2. **Fault Tolerance** - Automatic retries, fallback renders, corrupt file cleanup
+3. **Idempotent Operations** - Re-running skips already-generated valid assets
+4. **Configurable Modes** - Mock mode for development, production mode for real output
+5. **Extensible Design** - Add new agents by extending `BaseAgent` class
 
