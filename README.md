@@ -1,5 +1,9 @@
 # Documentary Pipeline - End-to-End Video Production Automation
 
+> **PROPRIETARY CODE - NOT FOR REPRODUCTION OR USE**
+> 
+> This repository is a **portfolio demonstration only**. The code is proprietary and is shared solely to showcase technical skills and expertise. No license is granted for reproduction, modification, distribution, or commercial/personal use. All rights reserved.
+
 A fully automated content production system that transforms a simple text brief into a complete, rendered video - with zero manual intervention.
 
 ## Key Skills Demonstrated
