@@ -1,12 +1,29 @@
 # Documentary Pipeline - End-to-End Video Production Automation
 
-> **PROPRIETARY CODE - NOT FOR REPRODUCTION OR USE**
-> 
-> This repository is a **portfolio demonstration only**. The code is proprietary and is shared solely to showcase technical skills and expertise. No license is granted for reproduction, modification, distribution, or commercial/personal use. All rights reserved.
+---
 
-A fully automated content production system that transforms a simple text brief into a complete, rendered video - with zero manual intervention.
+## PROPRIETARY & CONFIDENTIAL
 
-## Key Skills Demonstrated
+**This repository is for PORTFOLIO DEMONSTRATION PURPOSES ONLY.**
+
+This code is proprietary and confidential. It is published solely to showcase technical skills and expertise to potential employers and clients. 
+
+**NO LICENSE IS GRANTED.** This is NOT open source. You may NOT:
+- Copy, clone, or reproduce this code
+- Modify or create derivative works
+- Distribute or share this code
+- Use this code for any commercial or personal projects
+- Integrate any part of this code into other projects
+
+**All Rights Reserved.** Viewing this repository does not grant any usage rights.
+
+---
+
+## About This Project
+
+A fully automated content production system that transforms a simple text brief into a complete, rendered video - demonstrating end-to-end Python automation capabilities.
+
+## Skills & Expertise Demonstrated
 
 | Skill | Implementation |
 |-------|----------------|
@@ -19,9 +36,9 @@ A fully automated content production system that transforms a simple text brief 
 | **Configuration Management** | YAML-based configs with environment separation (mock/production modes) |
 | **Data Transformation** | JSON parsing, schema extraction from LLM responses, state management |
 
-## What This Project Does
+## What This System Achieves
 
-**Input:** A YAML brief describing a video topic (title, key points, duration)
+**Input:** A YAML brief describing a video topic
 
 **Output:** A fully rendered MP4 video with:
 - AI-generated script (structured narrative)
@@ -33,11 +50,10 @@ A fully automated content production system that transforms a simple text brief 
 Brief (YAML) → Script → Structure → Images → Audio → Timeline → Video (MP4)
 ```
 
-## Technical Architecture
+## Technical Architecture Highlights
 
 ### Pipeline Pattern (State Machine)
 ```python
-# main.py - Sequential agent execution with shared context
 pipeline = [
     ScriptAgent(config),        # LLM: Generate documentary script
     StructureTimingAgent(config), # LLM: Break into timed segments
@@ -54,18 +70,14 @@ for agent in pipeline:
 
 ### API Integration with Resilience
 ```python
-# Exponential backoff with jitter for rate limits
 @retry_with_backoff(max_retries=5, initial_delay=1.0)
 def _call_api():
     return client.models.generate_content(...)
-
 # Handles 429 RESOURCE_EXHAUSTED errors automatically
-# Implements streaming responses for large media files
 ```
 
 ### Media Processing Automation
 ```python
-# FFmpeg subprocess orchestration
 cmd = [
     "ffmpeg", "-y",
     "-f", "concat", "-safe", "0", "-i", video_concat_path,
@@ -83,7 +95,7 @@ subprocess.run(cmd, check=True)
 for ext in ['.png', '.jpg', '.jpeg']:
     candidate = base_path + ext
     if os.path.exists(candidate):
-        if os.path.getsize(candidate) > 1024:  # Validate file integrity
+        if os.path.getsize(candidate) > 1024:
             existing_file = candidate
             break
         else:
@@ -120,23 +132,7 @@ for ext in ['.png', '.jpg', '.jpeg']:
 - **Config:** YAML, JSON
 - **APIs:** Google GenAI SDK (streaming)
 
-## Quick Start
-
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Set API key in config/settings.yaml or environment
-export GOOGLE_API_KEY="your-key"
-
-# Run full pipeline (mock mode for testing)
-python main.py --brief episodes/episode_0001_uruk.yaml --name Test_Episode
-
-# Run with real AI + video render
-python main.py --brief episodes/episode_0001_uruk.yaml --name My_Episode --render
-```
-
-## Automation Highlights
+## Key Automation Features
 
 1. **Zero-Touch Execution** - Single command produces complete video from text input
 2. **Fault Tolerance** - Automatic retries, fallback renders, corrupt file cleanup
@@ -144,3 +140,12 @@ python main.py --brief episodes/episode_0001_uruk.yaml --name My_Episode --rende
 4. **Configurable Modes** - Mock mode for development, production mode for real output
 5. **Extensible Design** - Add new agents by extending `BaseAgent` class
 
+---
+
+## License
+
+**PROPRIETARY - ALL RIGHTS RESERVED**
+
+See [LICENSE](LICENSE) file. This code is not licensed for any use. Portfolio demonstration only.
+
+Copyright (c) 2024 Emilian Cristea
